@@ -1,0 +1,192 @@
+(events Left Right Up Down Tick)
+
+; (define interpolate
+;   (lambda (dynamic)
+;     (loop [^] (value (at dynamic))
+;       (select
+;         (after [Tick] (at dynamic))
+;         (after [^]    value)))))
+
+(define interpolate
+  (lambda (dynamic)
+    (join [*]
+      (after [^Tick*]
+        (let ((value (at dynamic)))
+          (after [*]
+            value))))))
+
+; (define direction
+;   (loop [^] (dir (cons 0 0))
+;     (select
+;       (after [Left]  (cons -1 0))
+;       (after [Right] (cons +1 0))
+;       (after [Up]    (cons 0 -1))
+;       (after [Down]  (cons 0 +1))
+;       (after [Tick]  dir))))
+
+(define direction
+  (select
+    (after [*; Left; Tick*]  (cons -1 0))
+    (after [*; Right; Tick*] (cons +1 0))
+    (after [*; Up; Tick*]    (cons 0 -1))
+    (after [*; Down; Tick*]  (cons 0 +1))
+    (after [Tick*]           (cons 0 0))))
+
+(define newSnake
+  (lambda (initialPosition)
+    (let ((head
+            (loop [^Tick] (h initialPosition)
+              (after [^Tick]
+                (cons
+                  (+ (car h) (car (at direction)))
+                  (+ (cdr h) (cdr (at direction))))))))
+      (after [^Tick*]
+        (cons nil (at head))))))
+
+(define lastPiece
+  (lambda (sn)
+    (if (isnil (car sn))
+      (cdr sn)
+      (car (car sn)))))
+
+(define snakeOutOfBounds
+  (lambda (sn)
+    (let ((h (cdr sn)))
+      (or
+        (<= (car h) -10)
+        (>= (car h) +10)
+        (<= (cdr h) -10)
+        (>= (cdr h) +10)))))
+
+(define veq
+  (lambda (u v)
+    (and
+      (== (car u) (car v))
+      (== (cdr u) (cdr v)))))
+
+(define snakeEatsFruit
+  (lambda (sn fruit)
+    (let ((h (cdr sn)))
+      (veq h fruit))))
+
+(define snakeEatsItself
+  (lambda (sn)
+    (fold
+      (lambda (eats piece)
+        (or eats (veq piece (cdr sn))))
+      false
+      (car sn))))
+
+; (define growSnake
+;   (lambda (snake)
+;     (let ((newPiece
+;             (join [^Tick]
+;               (after [^Tick*]
+;                 (let ((last (lastPiece (at snake))))
+;                   (after [^Tick]
+;                     last))))))
+;       (select
+;         (after [1] (at snake))
+;         (after [^Tick; ^Tick*]
+;           (cons (cons (at newPiece) (car (at snake))) (cdr (at snake))))))))
+
+(define growSnake
+  (lambda (snake)
+    (select
+      (after [1] (at snake))
+      (join [^Tick]
+        (after [^Tick*]
+          (let ((newPiece (lastPiece (at snake))))
+            (after [^Tick]
+              (let ((tail (car (at snake)))
+                    (head (cdr (at snake))))
+                (cons (cons newPiece tail) head)))))))))
+
+(define range
+  (lambda (lo hi)
+    (if (> lo hi)
+      nil
+      (cons lo (range (+ lo 1) hi)))))
+
+(define map
+  (lambda (f xs)
+    (if (isnil xs)
+      nil
+      (cons (f (car xs)) (map f (cdr xs))))))
+
+(define fold
+  (lambda (f a xs)
+    (if (isnil xs)
+      a
+      (fold f (f a (car xs)) (cdr xs)))))
+
+(define rng
+  (loop [^Tick] (state 51895843)
+    (after [^Tick]
+      (% (* 65539 state) 2147483648))))
+
+(define freshFruit
+  (after [^Tick*]
+    (let ((r (/ (at rng) 113025456)))
+      (cons
+        (+ -9 r)
+        (+ -9 (/ (- (at rng) (* 113025456 r)) 5948709))))))
+
+(define drawSnake
+  (lambda (sn)
+    (compose
+      (fold
+        (lambda (pxs piece)
+          (compose
+            (rgbxy 0 255 0 (car piece) (cdr piece))
+            pxs))
+        (compose)
+        (car sn))
+      (rgbxy 0 0 255 (car (cdr sn)) (cdr (cdr sn))))))
+
+(define game
+  (loop [^Tick]
+    (state
+      (cons
+        (newSnake (cons 0 0))
+        (at freshFruit)))
+    (after [^Tick]
+      (let ((snake (car state))
+            (fruit (cdr state)))
+        (if (or (snakeEatsItself (at snake)) (snakeOutOfBounds (at snake)))
+          (cons
+            (newSnake (cons 0 0))
+            (at freshFruit))
+          (if (snakeEatsFruit (at snake) fruit)
+            (cons
+              (growSnake snake)
+              (at freshFruit))
+            state))))))
+
+(define graphics
+  (let ((boundary
+          (compose
+            (fold
+              (lambda (p1 p2) (compose p1 p2))
+              (compose)
+              (map (lambda (x) (rgbxy 0 0 0 x -10)) (range -10 +10)))
+            (fold
+              (lambda (p1 p2) (compose p1 p2))
+              (compose)
+              (map (lambda (x) (rgbxy 0 0 0 x +10)) (range -10 +10)))
+            (fold
+              (lambda (p1 p2) (compose p1 p2))
+              (compose)
+              (map (lambda (y) (rgbxy 0 0 0 -10 y)) (range -10 +10)))
+            (fold
+              (lambda (p1 p2) (compose p1 p2))
+              (compose)
+              (map (lambda (y) (rgbxy 0 0 0 +10 y)) (range -10 +10))))))
+    (interpolate
+      (after [^Tick*]
+        (let ((snake (at (car (at game))))
+              (fruit (cdr (at game))))
+          (compose
+            (drawSnake snake)
+            (rgbxy 255 0 0 (car fruit) (cdr fruit))
+            boundary))))))

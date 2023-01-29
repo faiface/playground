@@ -1,0 +1,47 @@
+; Let's start! I hate to do this, but we're gonna have to
+; start with "I'll explain that later".
+
+(events)
+
+; In Dynner, every program starts with a declaration of
+; events that it can react to. Since we're not concered with
+; those in these initial chapters of the tutorial, we declare
+; an empty list of events.
+;
+; More on events in the later chapters of the tutorial.
+;
+; A NOTE ON THE LISP SYNTAX
+; =========================
+;
+; Dynner's syntax is based on LISP. No LISPer would consider
+; it a true LISP, it doesn't contain much of the features
+; LISP is famous for, like first-class syntax tree manipulation.
+; However, the LISP syntax has a nice property of being simple
+; and uniform, making introduction of new syntactic constructs
+; hassle-free.
+;
+; What does a LISP syntax mean? Generally, it means that all
+; language constructs follow this pattern: (keyword ...) where
+; the "keyword" specifies the construct, "..." is a placeholder
+; for further expressions and the parentheses around the whole
+; thing are mandatory.
+;
+; DEFINITIONS
+; ===========
+
+(define meaning 42)
+
+; At the top level, there is only one construct available
+; aside from the initial "events" declaration: "define".
+;
+; It creates a new global name an assigns it a value. The
+; general form is:
+;
+;   (define name value)
+;
+; In the above example, we assign the number 42 to the
+; name "meaning".
+;
+; All globally defined names can be viewed on the right half
+; of the screen after clicking the "Run" button. Hit it and
+; see what happens!

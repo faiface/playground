@@ -1,0 +1,42 @@
+(events)
+
+; PIXELS
+; ======
+;
+; To make matters more exciting, Dynner includes a built-in
+; functionality to construct pictures from pixels. They show
+; rendered on the right side when you click "Run".
+
+(define singlePixel
+  (rgbxy 100 220 75 0 0))
+
+; The "rgbxy" constructs takes five arguments as the name
+; suggests: R, G, B for the red, green, and blue components
+; of the color, and X, Y for the position of the pixel.
+;
+; The RGB components can range from 0 to 255. Integers below
+; 0 are treated as 0 and integers above 255 are treated as 255.
+;
+; Note, that changing the coordinates in the above will not
+; change anything about the rendered image because that is
+; rendered with respect to the bounding rectangle of the
+; pixels. In other words, the picture is cropped to precisely
+; fit the pixels it contains.
+
+(define twoPixels
+  (compose
+    (rgbxy 220 75 100 -1 0)
+    (rgbxy 75 100 220 +1 0)))
+
+; Use "compose" to put an arbitrary number of pixels in a
+; single picture. If two pixels share their coordinates, the
+; latter one will draw over the former one.
+
+(define threePixels
+  (compose singlePixel twoPixels))
+
+; We can also use "compose" to combine multiple composite
+; pictures together, not just individual pixels.
+;
+; No exercise for this chapter, but feel free to try and
+; create a picture of your own. :)

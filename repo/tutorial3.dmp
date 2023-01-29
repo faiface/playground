@@ -1,0 +1,70 @@
+(events)
+
+; BOOLEANS
+; ========
+;
+; Booleans are true or false and, just like in any other
+; language, are mainly used to make choices with "if".
+
+(define firstChoice
+  (if true 1 2))      ; = 1
+
+(define secondChoice
+  (if false 1 2))     ; = 2
+
+; Dynner is a functional language, it doesn't have statements
+; or commands. Everything is an expression, including "if",
+; which takes three arguments: a condition, a "then" expression,
+; and an "else" expression.
+;
+; If the condition is true, the "then" expression becomes the
+; result of the whole "if" expression, otherwise we take the
+; "else" expression.
+;
+; COMPARISON OPERATORS
+; ====================
+
+(define age 27)  ; TIP: change the age and hit "Run"
+
+(define isChild     (< age 18))
+(define isAdult     (>= age 18))
+(define isTeenage   (<= 13 age 19))  ; notice 3 arguments
+(define isRetired   (> age 64))
+(define isCenturion (== age 100))
+(define mustBreathe (!= age 0))
+
+; Comparison operators evaluate to true/false. All except
+; for "!=" can be applied to an arbitrary number of arguments,
+; with the intuitive semantics. Inequality can only be applied
+; to exactly two arguments.
+;
+; Ordering operators, "<", ">", "<=", ">=" can only be used
+; with integers, but "==" and "!=" can be used with any data
+; type.
+;
+; LOGICAL CONNECTIVES
+; ===================
+
+(define isWorkingAge
+  (and isAdult (not isRetired)))
+
+(define isStateSupported
+  (or isChild isRetired))
+
+; Three connectives -- "and", "or", "not" -- are provided with
+; the usual semantics. Note that they can only be applied to
+; booleans, using them with other types of values will result
+; in a runtime error.
+;
+; While "not" can only be applied to a single value, the other
+; two boolean operators can be applied to any number of
+; arguments, including zero. Try it out?
+;
+; EXERCISE
+; ========
+;
+; Use nested "if" expressions to define a "stateSupport" value
+; based on the age defined above. For a child, the state
+; support should be 700, for a retiree it should be 8500 and
+; 0 for a working adult. Feel free to use any other previous
+; definitions.

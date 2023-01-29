@@ -1,0 +1,83 @@
+(events)
+
+; LAMBDA
+; ======
+;
+; Dynner does not have any special syntax to define named
+; functions. Instead, it has a single "lambda" keyword to
+; construct function values, which can then be assigned to
+; names using "define".
+;
+; Lambdas are anonymous functions, or closures that you find
+; in most other languages. The name "lambda" comes from the
+; famous lambda calculus, which forms the basis of functional
+; programming languages.
+
+(define oneBigger
+  (lambda (number)
+    (+ 1 number)))
+
+(define seven (oneBigger 6))
+(define nine  (oneBigger (oneBigger seven)))
+
+; The syntax for constructing a function value is:
+;
+;   (lambda (parameter1 parameter2 ...) resultExpression)
+;
+; The parentheses around the whole "lambda" expression are
+; mandatory. The parentheses after the keyword "lambda"
+; enumerate zero or more names of the function parameters.
+;
+; The "resultExpression" can use the parameter names to
+; compute the result of the function.
+;
+; If we have a function value, like "oneBigger" above, we
+; can use it by supplying a concrete argument value in place
+; of every parameter:
+;
+;   (functionValue argument1 argument2 ...)
+;
+; This is called a "call expression" and its result will be
+; the result expression of the function with every occurence
+; of a parameter replaced by the corresponding argument value.
+;
+; The example above can be computed as follows:
+;
+;   (oneBigger 6)
+;   ((lambda (number) (+ 1 number)) 6)
+;   (+ 1 6)
+;   7
+;
+; First we substitue the name -- "oneBigger" -- with its
+; value, which is a function. Then we reduce the "call
+; expression" by taking the result expression of the function
+; and replacing every occurence of "number" with the value 6.
+
+(define average
+  (lambda (a b)
+    (/ (+ a b) 2)))
+
+(define hopefullyFive (average 0 10))
+
+; Functions must be called with the correct number of
+; arguments. The "average" function takes two arguments, so
+; we supply two numbers in the call.
+;
+; For those familiar with functional programming, no, lambdas
+; are not automatically curried.
+
+(define factorial
+  (lambda (n)
+    (if (< n 2)
+      1
+      (* n (factorial (- n 1))))))
+
+(define factorialOf5 (factorial 5))
+
+; Recursion is supported!
+;
+; EXERCISE
+; ========
+;
+; Make a function that takes a single integer "d" and produces
+; a picture containing two pixels which are "d" pixels apart.

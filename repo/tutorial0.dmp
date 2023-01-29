@@ -1,0 +1,13 @@
+; Hello, and welcome to the Dynamic Modal Playground!
+;
+; I have implemented a very minimal language to showcase
+; a new approach to creating programs that react to events.
+; If you're familiar with the terminology, it's a new form
+; of reactive functional programming.
+;
+; Why should you care?
+; ====================
+;
+; TODO
+
+(events)

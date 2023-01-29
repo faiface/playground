@@ -1,0 +1,68 @@
+(events)
+
+; Once again, the program starts with a declaration of an empty
+; list of events.
+;
+; INTEGERS
+; ========
+;
+; The first basic data type included in Dynner is integers, both
+; positive and negative whole numbers. Decimal, or floating point
+; numbers are not supported, for simplicity.
+
+(define positive 7)
+(define alsoPositive +3)
+(define negative -13)
+
+; For negative integers, we write a - sign in front of a number
+; without any space. For a positive integer, we can optionally
+; write a + sign in the same way.
+;
+; ARITHMETIC OPERATIONS
+; =====================
+;
+; Since the syntax of Dynner is based on LISP, we use the so
+; called "prefix Polish notation" for writing arithmetic
+; expressions.
+;
+; Instead of (a + b), we write (+ a b).
+;
+; Two important things:
+;   1. The parentheses are required.
+;   2. The arguments are separated by spaces only. No commas
+;      required, or allowed.
+;
+; Don't forget to hit the "Run" button to see the results of
+; the following computations.
+
+(define sumUpTo4                (+ 1 2 3 4))
+(define factorialOf5            (* 1 2 3 4 5))
+(define oneLessThan7            (- 7 1))
+(define halfOf10                (/ 10 2))
+(define impreciseDivision       (/ 17 6))  ; rounds down
+(define remainderOfThatDivision (% 17 6))
+
+; To sum or multiply more than two arguments, we simply write
+; them all out, repeating the same operator is not required here.
+;
+; Subtracting or dividing by more than two arguments is also
+; allowed, in this case all the arguments starting from the
+; second are subtracted from / divide the first argument.
+
+(define complexExpression
+  (/ factorialOf5 (+ 5 sumUpTo4)))
+
+; All the arithmetic operators can take expressions as
+; arguments, not just naked integer literals. In the example
+; above, we use two previously defined names in a complex
+; expression that evaluates to 8.
+;
+; Note, that the arguments are still separated only by spaces,
+; even if they are complex expressions.
+;
+; EXERCISE
+; ========
+;
+; Addition and multiplication can also take zero arguments.
+; What's the result of an empty addition and an empty
+; multiplication?
