@@ -1,0 +1,104 @@
+; We have arrived!
+;
+; NOVELTY ALERT! TIME TO START READING CAREFULLY ;)
+;
+; From this chapter onwards, we are going to be covering the
+; interesting stuff. You might have skimmed quickly through
+; the previous chapters or even skipped them completely. All of
+; it was probably familiar. What follows likely won't be.
+;
+; It is new, it might not be intuitive at first, but I promise,
+; it's pretty cool... or so I think.
+;
+; EVENTS
+; ======
+;
+; We start with a classical example -- a counter.
+
+(events Increment Decrement Reset)
+
+; The "events" declaration lists all the events that the program
+; can react to. These are just names, they don't specify any
+; behavior. The program itself defines how it reacts to them.
+;
+; Press "Run" and notice that three new buttons appeared on the
+; right -- each corresponding to one of the events that we
+; declared. Pressing a button makes an event happen. Try it!
+;
+; WHAT ARE EVENTS, ANYWAY?
+;
+; Dynner is a functional language where all the values are
+; immutable, except for a little caveat! The program listens
+; to events and transitions to a new state every time an event
+; happens.
+;
+; The state of the program is fully determined by the sequence
+; of events that have happened since the start.
+;
+; This has no effect on regular values like numbers, booleans,
+; and so on. But it has an effect on *dynamic cells*, a new kind
+; of a value that Dynner introduces. The following parts of the
+; tutorial will be spent on studying dynamic cells in depth --
+; they can do a lot.
+;
+; DYNAMIC CELLS
+; =============
+
+(define staticValue 42)
+
+(define dynamicCounter
+  (loop [^] (count 0)
+    (select
+      (after [Increment] (+ count 1))
+      (after [Decrement] (- count 1))
+      (after [Reset]     0))))
+
+; There is no need to fully understand the code above, we haven't
+; covered the constructs yet!
+;
+; All that you need to know right now is that "dynamicCounter"
+; is a dynamic cell. On the other hand, "staticValue" is not
+; a dynamic cell.
+;
+; WHAT IS A DYNAMIC CELL?
+;
+; A dynamic cell is a little box that contains its current value
+; and can change this value as events happen.
+;
+; How is that different from the usual variables found in
+; imperative languages? The value of a variable in an imperative
+; language can be changed from the outside using assignment
+; statements. On the other hand, a dynamic cell cannot be
+; influenced from the outside in any way -- all of its dynamic
+; behavior is specified in its construction.
+;
+; In other words, the behavior of a dynamic cell is fully
+; described in its definition. A good analogue is spreadsheet
+; cells with formulas. We don't run commands to update these,
+; they update themselves according to their formulas. Dynamic
+; cells are very similar: they update themselves whenever events
+; happen.
+;
+; TODO: differences from FRP.
+;
+; INTERACTING WITH DYNAMIC CELLS
+;
+; Press the "Run" button and observe these two definitions show
+; up on the right side. Notice two things:
+;
+;   1. You see "(at dynamicCounter)" instead of just
+;      "dynamicCounter".
+;
+;      That's because a dynamic cell is not the same thing as
+;      its current value. However, the current value is what
+;      we are interested in when interacting with the program.
+;      The notation "(at ...)" says that the value displayed
+;      to the right of it is the current value of the dynamic
+;      cell in question.
+;
+;   2. Try pressing the event buttons. Notice that the current
+;      value of "dynamicCounter" will keep changing, while
+;      "staticValue" stays the same.
+;
+; In the next part, we will learn about the event patterns and
+; how to construct simple dynamic cells.

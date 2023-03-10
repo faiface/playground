@@ -1,0 +1,47 @@
+(events)
+
+; "LET" BINDINGS
+; ==============
+;
+; While "define" allows us to associate a name with a value
+; globally, oftentimes it's useful to give names to intermediate
+; results in a complex expression.
+;
+; The general syntax of "let" is as as follows:
+;
+;   (let ((name1 value1) (name2 value2) ...) resultExpression)
+;
+; The "let" keyword is followed by a parenthesized list of
+; variable bindings. Each name is assigned its corresponding
+; value and all of those names can be used in the result
+; expression.
+;
+; The result of the whole "let" expression is then obtained by
+; replacing each bound variable with its corresponding value
+; in the result expression and evaluating that.
+
+(define salary
+  (lambda (hoursWorked hourlyRate bonusThreshold bonusRate)
+    (let ((baseSalary  (* hourlyRate hoursWorked))
+          (extraHours  (- hoursWorked bonusThreshold))
+          (bonusHours  (if (> extraHours 0) extraHours 0))
+          (bonusSalary (* bonusRate bonusHours)))
+      (+ baseSalary bonusSalary))))
+
+(define mikeSalary (salary 187 30 160 15))
+(define joshSalary (salary 159 40 160 30))
+
+; Later assignments in a single "let" expression can refer to
+; the previous assignments. Recursion is not allowed, though,
+; that's only available for names introduced with "define".
+;
+; "Let" can be used to improve readability or avoid the need to
+; repeat the same expression multiple times. In Dynner, there's
+; one more use-case associated specifically with dynamic cells.
+; That will be covered in the chapter on the "join" operator.
+;
+; Above, we define a complex function to compute a monthly
+; salary for an employee. Hours worked above a certain threshold
+; are rewarded with a bonus rate. While the formula is fairly
+; complicated, using "let" made it possible to write it in a
+; readable way.

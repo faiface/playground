@@ -58,22 +58,16 @@
         (<= (cdr h) -10)
         (>= (cdr h) +10)))))
 
-(define veq
-  (lambda (u v)
-    (and
-      (== (car u) (car v))
-      (== (cdr u) (cdr v)))))
-
 (define snakeEatsFruit
   (lambda (sn fruit)
     (let ((h (cdr sn)))
-      (veq h fruit))))
+      (== h fruit))))
 
 (define snakeEatsItself
   (lambda (sn)
     (fold
       (lambda (eats piece)
-        (or eats (veq piece (cdr sn))))
+        (or eats (== piece (cdr sn))))
       false
       (car sn))))
 

@@ -1,0 +1,100 @@
+(events)
+
+; The data types we've covered so far were integers, booleans,
+; pixels, and functions. There are only two more types to go
+; before we've covered all the uninteresting basics and can
+; move on to the actually exciting stuff!
+;
+; CONS(TRUCT) PAIRS
+; =================
+
+(define coordinates (cons 100 -45))
+
+; Use "cons" to construct a pair. A pair is a single value that
+; holds two other values inside of it.
+;
+; A pair can only contain two values. Using "cons" with a number
+; of arguments different than 2 is an error.
+
+(define x (car coordinates))  ; takes the first value
+(define y (cdr coordinates))  ; takes the second value
+
+; To the delight of LISP enthusiasts and at the risk of
+; confusion for everybody else, Dynner follows the decades old
+; tradition of using "car" to take the first value out of a pair
+; and "cdr" to take the second one.
+;
+; Nothing spooky here, the semantics are simple:
+;
+;   (car (cons a b))  =  a
+;   (cdr (cons a b))  =  b
+
+; NIL
+; ===
+
+(define nothingHere   nil)
+(define isItReallyNil (isnil nothingHere))
+
+; The language provides a built-in value "nil", which is just
+; that, the value "nil". The "isnil" operator takes a single
+; argument and evaluates to "true" if it's "nil", otherwise it
+; evaluates to "false".
+;
+; The value "nil" can be used to signalize an absence of a
+; useful result, for example a function searching for an element
+; in a list can return "nil" if the element was not found.
+;
+; The other important use of "nil" has to do with lists.
+;
+; LISTS
+; =====
+;
+; Dynner provides no special built-in type for lists. Instead,
+; lists are conventionally built by combining the use of "cons"
+; and "nil".
+;
+; The convension is following:
+;   - "nil" represents an empty list
+;   - "(cons x rest)" represents a list whose first element is
+;     the value "x" and "rest" is another list (empty or not)
+;     containing the remaining elements in the list.
+;
+; Some examples:
+
+(define emptyList      nil)
+(define singletonList  (cons 7 nil))
+(define oneThroughFour (cons 1 (cons 2 (cons 3 (cons 4 nil)))))
+
+; To construct and manipulate lists, we typically use recursion.
+
+(define range
+  (lambda (start end)
+    (if (> start end)
+      nil
+      (cons start (range (+ start 1) end)))))
+
+(define oneThroughTen
+  (range 1 10))
+
+; The "range" function takes two integers and constructs a list
+; of all the integers from "start" to "end", inclusive. It's
+; written recursively:
+;   1. If "start" is greater than "end", return an empty list.
+;   2. Otherwise, return a list with "start" as its first element
+;      and the range from "start + 1" to "end" constituting the
+;      remaining elements.
+
+(define sumList
+  (lambda (list)
+    (if (isnil list)
+      0
+      (+ (car list) (sumList (cdr list))))))
+
+(define sumFrom1to10 (sumList oneThroughTen))
+
+; Similarly, to compute something from a list, we use recursion.
+; Here we want to add up all the elements of a list, so:
+;   1. In the case of an empty list, the sum is 0.
+;   2. Otherwise, we recursively compute the sum of the list
+;      excluding its first element -- "(sumList (cdr list))" --
+;      then add the first element to it: "(car list)".
